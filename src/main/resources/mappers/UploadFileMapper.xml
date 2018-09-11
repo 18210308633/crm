@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.itcast.core.dao.UploadFileDao">
+
+	
+	<insert id="insert" parameterType="cn.itcast.core.bean.UploadFile">
+ 		insert into x_subjoin(AppealID,FileName,FileExt,FileSize,RealPath,FileType,RecordOrgID,RecordOrgName,RecordUserID,RecordUserName,RecordTime) values(#{AppealID}, #{FileName}, #{FileExt}, #{FileSize},#{RealPath}, #{FileType}, #{DeptID}, #{DeptName}, #{UserID}, #{UserName}, #{CreateTime});
+	</insert>
+	
+	<update id="updateFile" parameterType="cn.itcast.core.bean.UploadFile" >
+    update x_subjoin
+    <set >
+      <if test="FileName != null" >
+        FileName = #{FileName},
+      </if>
+      <if test="FileExt != null" >
+        FileExt = #{FileExt},
+      </if>
+      <if test="RealPath != null" >
+        RealPath = #{RealPath}
+      </if>
+    </set>
+    where AppealID = #{AppealID}
+  </update>
+  
+  <select id="FindFile" resultType="string" parameterType="cn.itcast.core.bean.UploadFile">
+    select AppealID from x_subjoin where AppealID = #{AppealID}
+  </select>
+  
+<select id="ImageUser" resultType="string" parameterType="cn.itcast.core.bean.UploadFile">
+    select RealPath from x_subjoin where AppealID = #{AppealID}
+  </select>
+</mapper>

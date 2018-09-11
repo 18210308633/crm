@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <title>主页</title>
+     <meta charset="utf-8">
+     <meta name="renderer" content="webkit|ie-comp|ie-stand">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+     <meta http-equiv="Cache-Control" content="no-siteapp" />
+     <link href="${ctx}/js/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+     <link  rel="stylesheet" href="${ctx}/js/bootstrap-upload/css/default.css">
+     <link  rel="stylesheet" href="${ctx}/js/bootstrap-upload/css/fileinput.css">
+	 <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	 <link rel="stylesheet" type="text/css" href="${ctx}/css/htmleaf.css">
+	 <link rel="stylesheet" href="${ctx}/css/jquery.mCustomScrollbar.min.css" />
+     <link rel="stylesheet" href="${ctx}/css/custom.css">
+     <script src="${ctx}/js/jquery-1.11.0.min.js" type="text/javascript"></script>
+	 <script src="${ctx}/js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+	 <script src="${ctx}/js/jquery.mCustomScrollbar.concat.min.js"></script>
+     <script src="${ctx}/js/custom.js"></script>
+     <script type="text/javascript" src="${ctx}/js/bootstrap-upload/js/fileinput.js"></script>
+
+  </head>
+  
+<body id="body">
+<input id="IsShow" name="IsShow" type="hidden" value="close">
+	<div class="page-wrapper">
+            <nav id="sidebar" class="sidebar-wrapper">
+              <div class="sidebar-content">
+                <a href="#" onclick="Show()" id="toggle-sidebar"><i class="fa fa-bars"></i></a>
+                <div class="sidebar-brand">
+                    <a href="#">pro sidebar</a>
+                </div>
+                <div class="sidebar-header">
+                    <div class="user-pic">
+                    <a style="cursor:hand;" data-toggle="modal" data-target="#myModal"><img id="imgInit" class="img-responsive img-rounded" src="${tupian!''}" alt=""></a>
+                        
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" id="name"></span>
+                        <span class="user-role" id="persontype"></span>
+                        <div class="user-status">                       
+                            <a href="#"><span class="label label-success">Online</span></a>                           
+                        </div>
+                    </div>
+                </div><!-- sidebar-header  -->
+                <div class="sidebar-search">
+<!--                     <div>                   
+                        <div class="input-group">                          
+                            <input type="text" class="form-control search-menu" placeholder="Search for...">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>  -->                   
+                </div><!-- sidebar-search  -->
+                <div class="sidebar-menu">
+                    <ul>
+                        <li class="header-menu"><span>菜单目录</span></li>
+                        <#list list as list>
+                        <li class="sidebar-dropdown">
+                            <a  href="#" ><i class="fa fa-diamond"></i><span>${list.menuname!''}</a>
+                            <div class="sidebar-submenu">
+                            <#list menulist as menulist>
+                              <#if menulist.parentid==list.menuid>
+                                <ul>
+                                    <li><a href="${menulist.menuurl!''}" target="iframe_a">${menulist.menuname!''}</a></li>
+                                </ul>
+                                
+                              </#if>
+                            </#list> 
+                            </div>
+                        </li> 
+                        </#list>                 
+                     </ul>
+                   </div><!-- sidebar-menu  -->            
+                </div><!-- sidebar-content  -->
+        
+                <div class="sidebar-footer">
+                    <a href="#" target="iframe_a"><i class="fa fa-bell"></i><span class="label label-warning notification">3</span></a>
+                    <a href="#" target="iframe_a"><i class="fa fa-envelope"></i><span class="label label-success notification">7</span></a>
+                    <a href="#" target="iframe_a"><i class="fa fa-gear"></i></a>
+                    <a href="${ctx}/login.action" style="cursor:hand;"><i class="fa fa-power-off"></i></a>
+                </div>
+            </nav><!-- sidebar-wrapper  -->
+
+            <main class="page-content">
+                <div id="paddiv" class="container-fluid" style="padding: 0px 0px 0px 42px;margin-bottom: 0px;">
+                	<iframe src="listuser.action" id="main" name="iframe_a" frameborder="0" style="width: 100%;"></iframe>
+                </div>
+            </main><!-- page-content" -->
+        </div><!-- page-wrapper -->
+	
+	
+	<!-- 上传文件模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog"  role="document" style="width:900px">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h3 class="modal-title" id="myModalLabel">
+				<span class="label label-danger">上传文件！</span>	
+				</h3>
+			</div>
+			<div class="modal-body">
+			  <!-- <div class="file-loading" style="max-height:600px;min-height:300px;"> 
+                 <input id="input-b6" name="input-b6[]" type="file" multiple>
+              </div> -->
+              <form enctype="multipart/form-data" method="post">
+				<div class="row" style="padding:5px">
+			       <div class="col-xs-12 col-sm-1 col-md-1 col-lg-1" >			 
+					   <label class="control-label" for="FileAppealID">选择文件</label>
+				   </div>								 
+		            <div class="col-xs-12 col-sm-11 col-md-11 col-lg-11" >
+					    <input id="file-0a" name="myfiles" class="file-loading" type="file" multiple data-min-file-count="1" data-show-caption="true">														
+			        </div>			 
+	            </div>
+	          </form>	
+			</div>
+			<div class="modal-footer">				
+				<button type="button" class="btn btn-success" data-dismiss="modal"><span class="glyphicon glyphicon-remove"> 关闭
+				</button>
+				<button type="button" id="btnShow" class="btn btn-primary"><span class="glyphicon glyphicon-user"> 确定</button>			
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+</body>
+</html>
+<script>
+
+$(function(){
+	$.post('${ctx}/ImageUser.action','',function(data){
+		document.getElementById('imgInit').src = data.url;
+	})
+})
+  $(function(){
+      document.getElementById("main").style.height=document.documentElement.clientHeight-10+"px";
+  });
+
+  //调节左侧导航栏和右侧显示中间的间隔距离
+  function Show(){
+	  var IsShow = $("#IsShow").val();
+	  if (IsShow == 'close') {
+		  document.getElementById("paddiv").style.padding="0px 0px 0px 0px";
+		  $("#IsShow").val("open");
+	  } else {
+		  document.getElementById("paddiv").style.padding="0px 0px 0px 42px";
+		  $("#IsShow").val("close");
+	  }
+  };
+$(function(){
+	$.post('${ctx}/selectuser.action','',function(data){
+		$("#name").html(data.name)
+		$("#persontype").html(data.persontype)
+	})
+})
+
+
+$(document).on('ready', function() {
+
+    $('#file-0a').fileinput({
+        language: 'zh',
+        uploadUrl: '${ctx}/UploadFile.action',//上传文件路径
+        enctype: 'multipart/form-data',
+        //deleteUrl: '',//删除图片时的请求路径
+        dropZoneEnabled: false,
+        showPreview: true,      //显示预览    
+        showClose: true,
+        autoReplace: false,
+        uploadAsync: true,  //是否为异步上传   
+        validateInitialCount:true,
+        allowedPreviewTypes: ['image','pdf'],
+        previewFileType: ['image','pdf'],
+        previewFileIcon: "<iclass='glyphicon glyphicon-king'></i>",
+        allowedFileExtensions : ['jpg', 'png','gif','doc','docx','pdf','mp3','mp4','xlsx'],
+        previewFileIconSettings: { // configure your icon file extensions  
+        	                'pdf': '<i class="fa fa-file-pdf-o text-danger"></i>',  
+        	                'jpg': '<i class="fa fa-file-photo-o text-danger"></i>',  
+        	                'gif': '<i class="fa fa-file-photo-o text-muted"></i>',  
+        	                'png': '<i class="fa fa-file-photo-o text-primary"></i>',  
+        	                'jpeg': '<i class="fa fa-file-photo-o text-primary"></i>'  
+        	            },
+        initialPreviewAsData: true   
+    }).on("fileuploaded", function(event,data,previewId,index) {
+    	window.location.reload();
+    }); 
+});
+</script>

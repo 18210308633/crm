@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+<typeAliases>
+   <package name="cn.itcast.core.bean"/>
+   </typeAliases>
+   <mappers>
+<!--    所有的mapper文件请填写位置 -->
+<mapper resource="cn/itcast/core/dao/CustomerDao.xml"/>
+<mapper resource="cn/itcast/core/dao/SchoolDao.xml"/>
+<mapper resource="cn/itcast/core/dao/UserMapper.xml"/>
+<mapper resource="cn/itcast/core/dao/UploadFileDao.xml"/>
+   </mappers>
+</configuration>

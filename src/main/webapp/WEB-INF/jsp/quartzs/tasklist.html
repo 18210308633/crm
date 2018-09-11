@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>listuser.html</title>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="stylesheet" href="${ctx}/js/bootstrap-3.3.7/css/bootstrap.min.css">
+<link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="${ctx}/js/layer-v3.1.1/layer/theme/default/layer.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="${ctx}/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="${ctx}/js/jquery.form.min.js"></script>
+<script type="text/javascript" src="${ctx}/js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script src="${ctx}/js/layer-v3.1.1/layer/layer.js" type="text/javascript"></script>
+<script src="${ctx}/js/validate.js" type="text/javascript"></script>
+</head>
+
+<body>
+
+	<div class="panel-body" style="padding-bottom:0px;">
+		
+		<div id="toolbar" class="btn-group">
+			<button id="btn_add" type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增任务
+			</button>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="list-group-item" style="background-color: #1bd1a5;">任务列表</div>
+			<!-- /.panel-heading -->
+			<table class="table table-bordered table-striped" id="tableId">
+				<thead>
+					<tr>
+						<th style="text-align: center;">序号</th>
+						<!-- <th style="text-align: center;">任务组名</th> -->
+						<th style="text-align: center;">任务名称</th>
+						<!-- <th style="text-align: center;">触发器组名</th> -->
+						<th style="text-align: center;">触发器名</th>
+						<th style="text-align: center;">时间表达式</th>
+						<th style="text-align: center;">上次运行时间</th>
+						<th style="text-align: center;">下次运行时间</th>
+						<th style="text-align: center;">状态</th>						
+						<th style="text-align: center;">开始时间</th>
+						<th style="text-align: center;">结束时间</th>
+						<th style="text-align: center;">任务类名</th>
+						<th style="text-align: center;">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<#list list as list>
+					<tr>
+						<td style="text-align: center;">${list_index+1}</td>
+						<!-- <td style="text-align: center;">${list.jobGroupName!''}</td> -->
+						<td style="text-align: center;">${list.jobName!''}</td>
+						<!-- <td style="text-align: center;">${list.triggerGroupName!''}</td> -->
+						<td style="text-align: center;">${list.triggerName!''}</td>
+						<td style="text-align: center;">${list.cronExpr!''}</td>
+						<td style="text-align: center;">${list.previousFireTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+						<td style="text-align: center;">${list.nextFireTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+						<#if list.jobStatus=="NONE">
+						<td style="text-align: center;">未知</td>
+						<#elseif list.jobStatus=="NORMAL">
+						<td style="text-align: center;">正常</td>
+						<#elseif list.jobStatus=="PAUSED">
+						<td style="text-align: center;">暂停</td>
+						<#elseif list.jobStatus=="COMPLETE">
+						<td style="text-align: center;">完成</td>
+						<#elseif list.jobStatus=="ERROR">
+						<td style="text-align: center;">错误</td>
+						<#elseif list.jobStatus=="BLOCKED">
+						<td style="text-align: center;">锁定</td>
+						</#if>
+						<td style="text-align: center;">${list.startTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+						<td style="text-align: center;">${list.endTime!''}</td>
+						<td style="text-align: center;">${list.jobClass!''}</td>
+						<td style="text-align: center;">
+						   <a href="#" class="btn btn-primary btn-xs" onclick="editJob('${list.jobName!''}','${list.jobGroupName!''}');">编辑</a>
+							<#if list.jobStatus=="NORMAL">
+							<a href="#" class="btn btn-primary btn-xs" onclick="pauseJob('${list.jobName!''}','${list.jobGroupName!''}');">暂停</a>
+							<#elseif list.jobStatus=="PAUSED">
+							<a href="#" class="btn btn-primary btn-xs" onclick="resumeJob('${list.jobName!''}','${list.jobGroupName!''}');">启动</a>
+							</#if>
+							<a href="#" class="btn btn-danger btn-xs" onclick="deleteJob('${list.jobName!''}','${list.jobGroupName!''}','${list.triggerName!''}','${list.triggerGroupName!''}');">删除</a>							
+							</td>
+					</tr>
+					</#list>
+				</tbody>
+			</table>
+			<!-- 分页 -->
+
+			<!-- /.panel-body -->
+		</div>
+		<!-- /.panel -->
+	</div>
+	</div>
+	
+	
+<!-- 新增用户模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog"  role="document" style="width:510px">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h3 class="modal-title" id="myModalLabel">
+				<span class="label label-danger">新增任务！</span>	
+				</h3>
+			</div>
+			<div class="modal-body">
+					<form class="form-horizontal" role="form" id="form" method="post">
+						<div class="form-group">
+							<label for="firstname" class="control-label col-sm-2">表达式</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="时间表达式" vtype="string" name="cronExpr" id="cronExpr"
+									placeholder="请输入时间表达式">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">任务类名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="任务类名" vtype="string" name="jobClass" id="jobClass"
+									placeholder="请输入任务类名">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">任务名称</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="任务名称" vtype="string" name="jobName" id="jobName"
+									placeholder="请输入任务名称">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">任务组名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="任务组名" vtype="string" name="jobGroupName" id="jobGroupName"
+									placeholder="请输入任务组名">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">触发器名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="触发器名" vtype="string" name="triggerName" id="triggerName"
+									placeholder="请输入触发器名">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">触发组名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="触发组名" vtype="string" name="triggerGroupName" id="triggerGroupName"
+									placeholder="请输入触发器组名">
+							</div>
+						</div>
+
+					</form>
+
+				</div>
+			<div class="modal-footer">				
+				<button type="button" class="btn btn-success" data-dismiss="modal"><span class="glyphicon glyphicon-remove"> 关闭
+				</button>
+				<button type="button" id="btnShow" class="btn btn-primary" onclick="doSubmit()"><span class="glyphicon glyphicon-user"> 确定</button>			
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+<!-- 修改用户模态框（Modal） -->
+<div class="modal fade" id="upModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog"  role="document" style="width:510px">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h3 class="modal-title" id="myModalLabel">
+				<span class="label label-danger">编辑任务！</span>	
+				</h3>
+			</div>
+			<div class="modal-body">
+					<form class="form-horizontal" role="form" id="form1" method="post">
+					<input name="oldjobName" id="oldjobName" type="hidden">
+					<input name="oldjobGroupName" id="oldjobGroupName" type="hidden">
+					<input name="oldtriggerName" id="oldtriggerName" type="hidden">
+					<input name="oldtriggerGroup" id="oldtriggerGroup" type="hidden">
+					<input name="clazz" id="clazz" type="hidden">
+						<div class="form-group">
+							<label for="firstname" class="control-label col-sm-2">表达式</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="时间表达式" vtype="string" name="cronExpr" id="cronExpr1"
+									placeholder="请输入时间表达式">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">任务类名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="任务类名" vtype="string" name="jobClass" id="jobClass1"
+									placeholder="请输入任务类名">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">任务名称</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="任务名称" vtype="string" name="jobName" id="jobName1"
+									placeholder="请输入任务名称">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">任务组名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="任务组名" vtype="string" name="jobGroupName" id="jobGroupName1"
+									placeholder="请输入任务组名">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">触发器名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="触发器名" vtype="string" name="triggerName" id="triggerName1"
+									placeholder="请输入触发器名">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-690 control-label">触发组名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" vmode="not null" vdisp="触发组名" vtype="string" name="triggerGroupName" id="triggerGroupName1"
+									placeholder="请输入触发器组名">
+							</div>
+						</div>
+
+					</form>
+
+				</div>
+			<div class="modal-footer">				
+				<button type="button" class="btn btn-success" data-dismiss="modal"><span class="glyphicon glyphicon-remove"> 关闭
+				</button>
+				<button type="button" id="btn" onclick="UpdateSubmit()" class="btn btn-primary"><span class="glyphicon glyphicon-user"> 确定</button>			
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    //新增提交
+	function doSubmit(){		
+		if(doValidate(form)){	  
+			$("#btnShow").attr("disabled",'disabled');
+	    	$('#form').attr('action','${ctx}/task/add.action'); 	            
+	    	$('#form').ajaxSubmit(resultHandle)
+		}
+		
+	}
+    
+    //编辑提交
+	function UpdateSubmit(){		
+		if(doValidate(form1)){	  
+			$("#btn").attr("disabled",'disabled');
+	    	$('#form1').attr('action','${ctx}/task/editJob.action'); 	            
+	    	$('#form1').ajaxSubmit(resultHandle)
+		}
+		
+	}
+	
+	function resultHandle(data){
+		if(data.code == 1){
+			layer.msg(data.msg,{time:1000,icon: 1,end:function(){
+				window.location.reload();}
+			});return false;
+		}else{
+			layer.msg(data.msg,{icon: 2,end:function(){
+				layer.closeAll();		
+			}
+			});return false;
+		}
+	}
+	
+	//暂停
+	function pauseJob(jobName, jobGroupName) {
+		layer.confirm('确定要暂停任务吗?', {
+	    	  btn: ['确认','取消'] //按钮
+	    	}, function(){
+	    		$.post('${ctx}/task/pauseJob.action',{'jobName':jobName,'jobGroupName':jobGroupName},function(data){   			
+	    			if(data.code == 1){
+	    				layer.msg(data.msg,{time:1000,icon: 1,end:function(){
+	    					window.location.reload();}
+	    				});return false;
+	    			}else{
+	    				layer.msg(data.msg,{icon: 2,end:function(){
+	    					layer.closeAll();}
+	    				});return false;
+	    			}
+	    		});
+	    	}, function(){
+	    		layer.closeAll();
+	    	});
+	}
+	
+	//启动
+	function resumeJob(jobName, jobGroupName) {
+		layer.confirm('确定要启动任务吗?', {
+	    	  btn: ['确认','取消'] //按钮
+	    	}, function(){
+	    		$.post('${ctx}/task/resumeJob.action',{'jobName':jobName,'jobGroupName':jobGroupName},function(data){   			
+	    			if(data.code == 1){
+	    				layer.msg(data.msg,{time:1000,icon: 1,end:function(){
+	    					window.location.reload();}
+	    				});return false;
+	    			}else{
+	    				layer.msg(data.msg,{icon: 2,end:function(){
+	    					layer.closeAll();}
+	    				});return false;
+	    			}
+	    		});
+	    	}, function(){
+	    		layer.closeAll();
+	    	});
+	}
+	
+	//删除
+	function deleteJob(jobName, jobGroupName, triggerName, triggerGroupName) {		
+		layer.confirm('确定要删除任务吗?', {
+	    	  btn: ['确认','取消'] //按钮
+	    	}, function(){
+	    		$.post('${ctx}/task/deleteJob.action',{'jobName':jobName,'jobGroupName':jobGroupName,'triggerName':triggerName,'triggerGroupName':triggerGroupName},function(data){   			
+	    			if(data.code == 1){
+	    				layer.msg(data.msg,{time:1000,icon: 1,end:function(){
+	    					window.location.reload();}
+	    				});return false;
+	    			}else{
+	    				layer.msg(data.msg,{icon: 2,end:function(){
+	    					layer.closeAll();}
+	    				});return false;
+	    			}
+	    		});
+	    	}, function(){
+	    		layer.closeAll();
+	    	});
+	}
+	
+	var array = new Array();
+	array.push('${json}')
+	console.log(array);
+	//回写选中任务数据
+	function editJob(jobName,jobGroupName){	
+		var Json=JSON.parse(array);
+		for(var i=0;i<Json.length;i++){				
+				 if(jobName==Json[i].jobName && jobGroupName == Json[i].jobGroupName){
+			        $("#cronExpr1").val(Json[i].cronExpr);
+					$("#jobClass1").val(Json[i].jobClass);
+					$("#jobName1").val(jobName);
+					$("#oldjobName").val(jobName);
+					$("#jobGroupName1").val(jobGroupName);
+					$("#oldjobGroupName").val(jobGroupName);
+					$("#triggerName1").val(Json[i].triggerName);
+					$("#oldtriggerName").val(Json[i].triggerName);
+					$("#triggerGroupName1").val(Json[i].triggerGroupName);	
+					$("#oldtriggerGroup").val(Json[i].triggerGroupName);
+					$("#clazz").val(Json[i].jobClass);
+			        }
+		}
+		$('#upModal').modal('show');
+	}
+</script>

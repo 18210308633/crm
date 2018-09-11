@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.itcast.core.dao.LoginLogDao">
+
+	
+	<insert id="InsertLog" parameterType="cn.itcast.core.bean.LoginLog">
+ 		insert into t_loginlog(OptIp,OptTime,OptType,DofLag,OptUserId,OptUserName,OptMode,OptInfo,DeptId,DeptName) values(#{OptIp}, #{OptTime}, #{OptType}, #{DofLag},#{OptUserId}, #{OptUserName}, #{OptMode}, #{OptInfo}, #{DeptId}, #{DeptName});
+	</insert>
+	
+	<!-- <insert id="InsertResLog" parameterType="ResLog">
+ 		insert into p_reslog(LogLevel,ClassPath,ClassName,MethodName,LineNumber,ThreadName,CurrentTime,Message) values(#{LogLevel}, #{ClassPath},#{ClassName}, #{MethodName}, #{LineNumber}, #{ThreadName}, #{CurrentTime}, #{Message});
+	</insert> -->
+		
+</mapper>

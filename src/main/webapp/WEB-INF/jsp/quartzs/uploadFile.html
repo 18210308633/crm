@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="${ctx}/js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<input type="file" size="30" name="test" id="test" onchange="avl()"/>
+
+</body>
+</html>
+<script type="text/javascript">
+function avl(){
+var f=document.getElementById("test").files[0];
+        var img = document.createElement("img");
+        img.file = f;
+img.onload=function(){
+	alert(this.height+'----'+this.width);
+	}
+         var reader = new FileReader();
+        reader.onload = function(e){
+                img.src = e.target.result;
+            };
+        reader.readAsDataURL(f);
+        }
+</script>
